@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding="UTF-8"?>
+<jtlshopplugin>
+    <Name>JTL Coinsnap Payment</Name>
+    <Description>JTL Coinsnap Payment</Description>
+    <Author>Coinsnap</Author>
+    <URL>https://coinsnap.io</URL>    
+    <PluginID>jtl_coinsnappayment</PluginID>
+    <XMLVersion>100</XMLVersion>
+    <ShopVersion>5.2.3</ShopVersion>
+    <Version>1.0</Version>    
+    <CreateDate>2024-04-14</CreateDate>
+    <Install>
+        <PaymentMethod>
+            <Method>
+                <Name>Coinsnap Payment</Name>
+                <Sort>1</Sort>
+                <SendMail>0</SendMail>
+                <Provider>Coinsnap</Provider>
+                <TSCode>OTHER</TSCode>
+                <PreOrder>0</PreOrder>
+                <Soap>0</Soap>
+                <Curl>1</Curl>
+                <Sockets>0</Sockets>
+                <PictureURL>logo.png</PictureURL>
+                <ClassFile>CoinsnapPayment.php</ClassFile>
+                <TemplateFile>template/coinsnap_payment.tpl</TemplateFile>
+                <AdditionalTemplateFile>template/coinsnap_payment.tpl</AdditionalTemplateFile>
+                <ClassName>CoinsnapPayment</ClassName>
+                <Setting type="text" initialValue="" sort="1" conf="Y">
+                      <Name>Store ID</Name>
+                      <Description>Please enter your Coinsnap Store ID.</Description>
+                      <ValueName>store_id</ValueName>
+                  </Setting>
+                  <Setting type="text" initialValue="" sort="2" conf="Y">
+                      <Name>API Key</Name>
+                      <Description>Please enter your Coinsnap API Key.</Description>
+                      <ValueName>api_key</ValueName>
+                  </Setting>   
+                <MethodLanguage iso="GER">
+                    <Name>Coinsnap Zahlung</Name>
+                    <ChargeName>Coinsnap Zahlung</ChargeName>
+                    <InfoText>Bitcoin + Lightning Zahlung</InfoText>
+                </MethodLanguage>
+                <MethodLanguage iso="ENG">
+                    <Name>Coinsnap Payment</Name>
+                    <ChargeName>Coinsnap Payment</ChargeName>
+                    <InfoText>Bitcoin + Lightning payment</InfoText>
+                </MethodLanguage>
+                
+            </Method>
+        </PaymentMethod>
+        <Locales>
+            <Variable>
+                <Name>head_info_about_your_payment</Name>
+                <VariableLocalized iso="GER">Informationen zu Ihrer Zahlung</VariableLocalized>
+                <VariableLocalized iso="ENG">Information about your payment</VariableLocalized>
+            </Variable>            
+        </Locales>
+        <FrontendLink>
+            <Link>
+                <Filename>coinsnap_notify.php</Filename>
+                <Name>coinsnap notify</Name>
+                <Template>empty.tpl</Template>
+                <VisibleAfterLogin>N</VisibleAfterLogin>
+                <PrintButton>N</PrintButton>
+                <SSL>2</SSL>
+                <LinkLanguage iso="GER">
+                    <Seo>coinsnap-notify</Seo>
+                    <Name>coinsnap</Name>
+                    <Title>coinsnap</Title>
+                    <MetaTitle>coinsnap</MetaTitle>
+                    <MetaKeywords>coinsnap</MetaKeywords>
+                    <MetaDescription>coinsnap</MetaDescription>
+                </LinkLanguage>                
+                <LinkLanguage iso="ENG">
+                    <Seo>coinsnap-notify</Seo>
+                    <Name>coinsnap</Name>
+                    <Title>coinsnap</Title>
+                    <MetaTitle>coinsnap</MetaTitle>
+                    <MetaKeywords>coinsnap</MetaKeywords>
+                    <MetaDescription>coinsnap</MetaDescription>
+                </LinkLanguage>
+            </Link>
+         </FrontendLink>    
+    </Install>
+</jtlshopplugin>

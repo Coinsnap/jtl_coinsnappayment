@@ -1,0 +1,11 @@
+msgid "JTL Coinsnap Payment"
+msgstr "JTL Coinsnap Payment"
+
+msgid "JTL Coinsnap Payment"
+msgstr "JTL Coinsnap Payment"
+
+msgid "Coinsnap payment"
+msgstr "Coinsnap payment module"
+
+msgid "Die Zahlungsart ist nicht konfiguriert"
+msgstr "The payment method is not configured"
