@@ -28,7 +28,7 @@ class CoinsnapPayment extends Method
     private bool $payAgain;
 
     public const WEBHOOK_EVENTS = ['New','Expired','Settled','Processing'];	 
-
+    public const REFERRAL_CODE = 'D18284';
 
 
     /**
@@ -172,19 +172,23 @@ class CoinsnapPayment extends Method
         $checkoutOptions->setRedirectURL( $return_url );
         $client =new \Coinsnap\Client\Invoice($this->getApiUrl(), $this->getApiKey());
         $camount = \Coinsnap\Util\PreciseNumber::parseFloat($amount,2);
+        
+        $metadata = [];
+        $metadata['orderNumber'] = $invoice_no;
+        $metadata['customerName'] = $buyerName;
 								
         $csinvoice = $client->createInvoice(
-				    $this->getStoreId(),  
-			    	strtoupper( $currency ),
-			    	$camount,
-			    	$invoice_no,
-			    	$buyerEmail,
-			    	$buyerName, 
-			    	$return_url,
-			    	'',     
-			    	$metadata,
-			    	$checkoutOptions
-		    	);
+            $this->getStoreId(),  
+            strtoupper( $currency ),
+            $camount,
+            $invoice_no,
+            $buyerEmail,
+            $buyerName, 
+            $return_url,
+            self::REFERRAL_CODE,     
+            $metadata,
+            $checkoutOptions
+	);
 				
 		
         $payurl = $csinvoice->getData()['checkoutLink'] ;                
