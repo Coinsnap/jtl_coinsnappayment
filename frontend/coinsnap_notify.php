@@ -112,9 +112,9 @@ if ($status == 'Expired') {
 switch ($status) {
     case 'Processing':
         $payment->addIncomingPayment($order, (object)[
-            'fBetrag'          => $invoice->getData()['amount'],
-            'fcISO' => $invoice->getData()['currency'],
-            'cHinweis'         => $invoice->getData()['invoiceId'],
+            'fBetrag'          => $csinvoice->getData()['amount'],
+            'fcISO' => $csinvoice->getData()['currency'],
+            'cHinweis'         => $csinvoice->getData()['invoiceId'],
         ]);
         $payment->setOrderStatusToPaid($order);
         break;

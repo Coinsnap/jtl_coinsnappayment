@@ -92,7 +92,9 @@ class CoinsnapPayment extends Method
     {
         parent::finalizeOrder($order, $hash, $args);
 
-        $invoiceId = isset($args['invoiceId']) ? $args['invoiceId'] : null;
+        // $invoiceId = isset($args['invoiceId']) ? $args['invoiceId'] : null;
+
+        $invoiceId = $_SESSION['coinsnap']['response']['id'];
         $client = new \Coinsnap\Client\Invoice($this->getApiUrl(), $this->getApiKey());
         try {
             $client = new \Coinsnap\Client\Invoice($this->getApiUrl(), $this->getApiKey());
@@ -104,7 +106,7 @@ class CoinsnapPayment extends Method
             return false;
         }
         //TODO: Compare invoice hash and query hash
-        $_SESSION['coinsnap']['invoice_status'] = $status;
+        $_SESSION['coinsnap']['response']['status'] = $status;
         if ($status != 'Processing' && $status != 'Settled') {
             return false;
         }
@@ -137,13 +139,13 @@ class CoinsnapPayment extends Method
         parent::handleNotification($order, $hash, $args);
         //TODO: Consider partial payment and paid after expiration
         $allowedStatuses = ['Processing', 'Settled'];
-        if (isset($_SESSION['coinsnap']['invoice_status']) && in_array($_SESSION['coinsnap']['invoice_status'], $allowedStatuses)) {
+        if (isset($_SESSION['coinsnap']['response']['status']) && in_array($_SESSION['coinsnap']['response']['status'], $allowedStatuses)) {
             $this->addIncomingPayment($order, (object)[
                 'fBetrag'           => $order->fGesamtsumme,
                 'fZahlungsgebuehr'  => 0,
             ]);
             $this->setOrderStatusToPaid($order);
-            unset[$_SESSION['coinsnap']['invoice_status']];
+            unset($_SESSION['coinsnap']['response']['status']);
         }
     }
 
@@ -167,7 +169,7 @@ class CoinsnapPayment extends Method
 
         if (! $this->webhookExists($this->getStoreId(), $this->getApiKey(), $webhook_url)) {
             if (! $this->registerWebhook($this->getStoreId(), $this->getApiKey(), $webhook_url)) {
-                echo('unable to set Webhook url');
+                echo ('unable to set Webhook url');
                 exit;
             }
         }
@@ -225,6 +227,7 @@ class CoinsnapPayment extends Method
 
 
         $payurl = $csinvoice->getData()['checkoutLink'];
+        $_SESSION['coinsnap']['response'] = $csinvoice->getData();
         if (!empty($payurl)) {
             \header('Location: ' . $payurl);
         }
