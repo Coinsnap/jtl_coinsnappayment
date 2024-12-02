@@ -10,6 +10,7 @@ use JTL\Plugin\Helper as PluginHelper;
 use JTL\Plugin\Payment\Method;
 use JTL\Plugin\PluginInterface;
 use JTL\Shop;
+use JTL\Alert\Alert;
 
 /**
  * Class CoinsnapPayment
@@ -28,7 +29,7 @@ class CoinsnapPayment extends Method
     /** @var bool */
     private bool $payAgain;
 
-    public const WEBHOOK_EVENTS = ['New', 'Expired', 'Invalid', 'Settled', 'Processing'];
+    public const WEBHOOK_EVENTS = ['New', 'Invalid', 'Expired', 'Settled', 'Processing'];
     public const REFERRAL_CODE = 'D18284';
 
 
@@ -107,7 +108,7 @@ class CoinsnapPayment extends Method
         }
         //TODO: Compare invoice hash and query hash
         $_SESSION['coinsnap']['response']['status'] = $status;
-        if ($status != 'Processing' && $status != 'Settled') {
+        if ($status != 'Processing' || $status != 'Settled') {
             return false;
         }
         //TODO: Send email if selected in the settings?
@@ -149,7 +150,6 @@ class CoinsnapPayment extends Method
             $this->sendConfirmationMail($order);
             //TODO: Send confirmation email
             unset($_SESSION['coinsnap']);
-            header('Location: ' . $this->getReturnURL($order));
         }
     }
 
@@ -178,7 +178,7 @@ class CoinsnapPayment extends Method
             }
         }
 
-        $smarty       = Shop::Smarty();
+        // $smarty       = Shop::Smarty();
         // $localization = $this->plugin->getLocalization();
 
         if ($this->payAgain) {
