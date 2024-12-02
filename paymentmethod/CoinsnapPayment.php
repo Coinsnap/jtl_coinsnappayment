@@ -148,18 +148,20 @@ class CoinsnapPayment extends Method
             ]);
             $this->setOrderStatusToPaid($order);
             unset($_SESSION['coinsnap']['response']['status']);
-        } else {
-            // If the order has to be continued, we display the error in the payment page and the payment process is continued
-            $errorMessageToDisplay = !empty($explicitErrorMessage) ? $explicitErrorMessage : $errorMsg;
-
-            // Setting up the error message in the shop variable
-            $alertHelper = Shop::Container()->getAlertService();
-            $alertHelper->addAlert(Alert::TYPE_ERROR, $errorMessageToDisplay, 'payment error', ['saveInSession' => true]);
-
-            unset($_SESSION['coinsnap']['response']['status']);
-            // Redirecting to the checkout page
-            \header('Location:' . Shop::getURL() . '/Bestellvorgang?editVersandart=1');
         }
+        //JTL handles this automatically?
+        // else {
+        //     // If the order has to be continued, we display the error in the payment page and the payment process is continued
+        //     $errorMessageToDisplay = !empty($explicitErrorMessage) ? $explicitErrorMessage : $errorMsg;
+        //
+        //     // Setting up the error message in the shop variable
+        //     $alertHelper = Shop::Container()->getAlertService();
+        //     $alertHelper->addAlert(Alert::TYPE_ERROR, $errorMessageToDisplay, 'payment error', ['saveInSession' => true]);
+        //
+        //     unset($_SESSION['coinsnap']['response']['status']);
+        //     // Redirecting to the checkout page
+        //     \header('Location:' . Shop::getURL() . '/Bestellvorgang?editVersandart=1');
+        // }
     }
 
     /**
