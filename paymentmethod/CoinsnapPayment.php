@@ -10,6 +10,7 @@ use JTL\Plugin\Helper as PluginHelper;
 use JTL\Plugin\Payment\Method;
 use JTL\Plugin\PluginInterface;
 use JTL\Shop;
+use JTL\Alert\Alert;
 
 /**
  * Class CoinsnapPayment
@@ -141,12 +142,26 @@ class CoinsnapPayment extends Method
         $allowedStatuses = ['Processing', 'Settled'];
         if (isset($_SESSION['coinsnap']['response']['status']) && in_array($_SESSION['coinsnap']['response']['status'], $allowedStatuses)) {
             $this->addIncomingPayment($order, (object)[
-                'fBetrag'           => $order->fGesamtsumme,
-                'fZahlungsgebuehr'  => 0,
+                'fBetrag'           => $_SESSION['coinsnap']['response']['amount'],
+                'fcISO'  => $_SESSION['coinsnap']['response']['currency'],
+                'cHinweis'  => $_SESSION['coinsnap']['response']['id'],
             ]);
             $this->setOrderStatusToPaid($order);
             unset($_SESSION['coinsnap']['response']['status']);
         }
+        //JTL handles this automatically?
+        // else {
+        //     // If the order has to be continued, we display the error in the payment page and the payment process is continued
+        //     $errorMessageToDisplay = !empty($explicitErrorMessage) ? $explicitErrorMessage : $errorMsg;
+        //
+        //     // Setting up the error message in the shop variable
+        //     $alertHelper = Shop::Container()->getAlertService();
+        //     $alertHelper->addAlert(Alert::TYPE_ERROR, $errorMessageToDisplay, 'payment error', ['saveInSession' => true]);
+        //
+        //     unset($_SESSION['coinsnap']['response']['status']);
+        //     // Redirecting to the checkout page
+        //     \header('Location:' . Shop::getURL() . '/Bestellvorgang?editVersandart=1');
+        // }
     }
 
     /**
