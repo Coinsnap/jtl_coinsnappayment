@@ -143,11 +143,14 @@ class CoinsnapPayment extends Method
         if (isset($_SESSION['coinsnap']['response']['status']) && in_array($_SESSION['coinsnap']['response']['status'], $allowedStatuses)) {
             $this->addIncomingPayment($order, (object)[
                 'fBetrag'           => $_SESSION['coinsnap']['response']['amount'],
-                'fcISO'  => $_SESSION['coinsnap']['response']['currency'],
+                'cISO'  => $_SESSION['coinsnap']['response']['currency'],
                 'cHinweis'  => $_SESSION['coinsnap']['response']['id'],
             ]);
             $this->setOrderStatusToPaid($order);
-            unset($_SESSION['coinsnap']['response']['status']);
+            $this->sendConfirmationMail($order);
+            //TODO: Send confirmation email
+            unset($_SESSION['coinsnap']);
+            header('Location: ' . $this->getReturnURL($order));
         }
         //JTL handles this automatically?
         // else {
@@ -226,6 +229,7 @@ class CoinsnapPayment extends Method
         $metadata = [];
         $metadata['orderNumber'] = $invoice_no;
         $metadata['customerName'] = $buyerName;
+        $metadata['paymentHash'] = $paymentHash;
 
         $csinvoice = $client->createInvoice(
             $this->getStoreId(),
