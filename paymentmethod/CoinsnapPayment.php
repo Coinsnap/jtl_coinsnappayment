@@ -143,7 +143,7 @@ class CoinsnapPayment extends Method
                 'fZahlungsgebuehr'  => 0,
             ]);
             $this->setOrderStatusToPaid($order);
-            unset[$_SESSION['coinsnap']['invoice_status']];
+            unset($_SESSION['coinsnap']['invoice_status']);
         }
     }
 
@@ -167,7 +167,7 @@ class CoinsnapPayment extends Method
 
         if (! $this->webhookExists($this->getStoreId(), $this->getApiKey(), $webhook_url)) {
             if (! $this->registerWebhook($this->getStoreId(), $this->getApiKey(), $webhook_url)) {
-                echo('unable to set Webhook url');
+                echo ('unable to set Webhook url');
                 exit;
             }
         }
