@@ -1,11 +1,15 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace Plugin\jtl_coinsnappayment;
 
 use JTL\Plugin\Payment\LegacyMethod;
 use JTL\Checkout\Bestellung;
 use JTL\Plugin\Helper;
 use JTL\Shop;
-require_once (__DIR__ . '/../library/autoload.php');
+
+require_once(__DIR__ . '/../library/autoload.php');
 
 \ob_start();
 \error_reporting(0);
@@ -49,20 +53,18 @@ $store_id =  $payment->getSetting('store_id');
 $api_key =  $payment->getSetting('api_key');
 
 
-$notify_json = file_get_contents('php://input');        
+$notify_json = file_get_contents('php://input');
 
 $notify_ar = json_decode($notify_json, true);
 $invoice_id = $notify_ar['invoiceId'];
 $ApiUrl = 'https://app.coinsnap.io';
 
 try {
-    $client = new \Coinsnap\Client\Invoice($ApiUrl, $api_key);    
+    $client = new \Coinsnap\Client\Invoice($ApiUrl, $api_key);
     $csinvoice = $client->getInvoice($store_id, $invoice_id);
-    $status = $csinvoice->getData()['status'] ;
-    $order_no = $csinvoice->getData()['orderId'] ;
-    
-
-}catch (\Throwable $e) {    
+    $status = $csinvoice->getData()['status'];
+    $order_no = $csinvoice->getData()['orderId'];
+} catch (\Throwable $e) {
     echo "Error";
     exit;
 }
@@ -86,9 +88,9 @@ $order   = new Bestellung($orderId);
 $order->fuelleBestellung(false, 0, false);
 
 
-if ((int)$order->kBestellung === 0) {    
-    Shop::Container()->getLogService()->error('Coinsnap Notify:'.$orderId.' Missing payment provider');  
-    echo 'Coinsnap Notify:'.$orderId.' Missing payment provider';  
+if ((int)$order->kBestellung === 0) {
+    Shop::Container()->getLogService()->error('Coinsnap Notify:' . $orderId . ' Missing payment provider');
+    echo 'Coinsnap Notify:' . $orderId . ' Missing payment provider';
 }
 
 // validation
@@ -98,19 +100,28 @@ if (!\in_array((int)$order->cStatus, [\BESTELLUNG_STATUS_OFFEN, \BESTELLUNG_STAT
 }
 
 
-if ($status == 'Expired') $order_status = 'fail';
-else if ($status == 'Processing') $order_status = 'paid';
-else if ($status == 'Settled') $order_status = 'paid';
+if ($status == 'Expired') {
+    $order_status = 'fail';
+} elseif ($status == 'Processing') {
+    $order_status = 'paid';
+} elseif ($status == 'Settled') {
+    $order_status = 'paid';
+}
 
 
-switch ($order_status) {
-    case 'paid':
-        $payment->setOrderStatusToPaid($order);         
+switch ($status) {
+    case 'Processing':
+        $payment->addIncomingPayment($order, (object)[
+            'fBetrag'          => $invoice->getData()['amount'],
+            'fcISO' => $invoice->getData()['currency'],
+            'cHinweis'         => $invoice->getData()['invoiceId'],
+        ]);
+        $payment->setOrderStatusToPaid($order);
         break;
-    case 'fail':
-         PayPalHelper::sendPaymentDeniedMail($order->oKunde, $order);
-         break; 
-    }  
+        // case 'Settled':
+        // case 'fail':
+        //      PayPalHelper::sendPaymentDeniedMail($order->oKunde, $order);
+        //      break;
+}
 echo "OK";
 exit;
-
