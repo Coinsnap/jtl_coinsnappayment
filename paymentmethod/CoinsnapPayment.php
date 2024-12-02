@@ -10,7 +10,6 @@ use JTL\Plugin\Helper as PluginHelper;
 use JTL\Plugin\Payment\Method;
 use JTL\Plugin\PluginInterface;
 use JTL\Shop;
-use JTL\Alert\Alert;
 
 /**
  * Class CoinsnapPayment
@@ -29,7 +28,7 @@ class CoinsnapPayment extends Method
     /** @var bool */
     private bool $payAgain;
 
-    public const WEBHOOK_EVENTS = ['New', 'Expired', 'Settled', 'Processing'];
+    public const WEBHOOK_EVENTS = ['New', 'Expired', 'Invalid', 'Settled', 'Processing'];
     public const REFERRAL_CODE = 'D18284';
 
 
@@ -152,19 +151,6 @@ class CoinsnapPayment extends Method
             unset($_SESSION['coinsnap']);
             header('Location: ' . $this->getReturnURL($order));
         }
-        //JTL handles this automatically?
-        // else {
-        //     // If the order has to be continued, we display the error in the payment page and the payment process is continued
-        //     $errorMessageToDisplay = !empty($explicitErrorMessage) ? $explicitErrorMessage : $errorMsg;
-        //
-        //     // Setting up the error message in the shop variable
-        //     $alertHelper = Shop::Container()->getAlertService();
-        //     $alertHelper->addAlert(Alert::TYPE_ERROR, $errorMessageToDisplay, 'payment error', ['saveInSession' => true]);
-        //
-        //     unset($_SESSION['coinsnap']['response']['status']);
-        //     // Redirecting to the checkout page
-        //     \header('Location:' . Shop::getURL() . '/Bestellvorgang?editVersandart=1');
-        // }
     }
 
     /**
@@ -193,7 +179,7 @@ class CoinsnapPayment extends Method
         }
 
         $smarty       = Shop::Smarty();
-        $localization = $this->plugin->getLocalization();
+        // $localization = $this->plugin->getLocalization();
 
         if ($this->payAgain) {
             $paymentHash = $this->getOrderHash($order);
