@@ -10,7 +10,6 @@ use JTL\Plugin\Helper as PluginHelper;
 use JTL\Plugin\Payment\Method;
 use JTL\Plugin\PluginInterface;
 use JTL\Shop;
-use JTL\Alert\Alert;
 
 /**
  * Class CoinsnapPayment
@@ -93,7 +92,6 @@ class CoinsnapPayment extends Method
     {
         parent::finalizeOrder($order, $hash, $args);
 
-        // $invoiceId = isset($args['invoiceId']) ? $args['invoiceId'] : null;
 
         $invoiceId = $_SESSION['coinsnap']['response']['id'];
         $client = new \Coinsnap\Client\Invoice($this->getApiUrl(), $this->getApiKey());
@@ -101,19 +99,12 @@ class CoinsnapPayment extends Method
             $client = new \Coinsnap\Client\Invoice($this->getApiUrl(), $this->getApiKey());
             $csinvoice = $client->getInvoice($this->getStoreId(), $invoiceId);
             $status = $csinvoice->getData()['status'];
-            // $order_no = $csinvoice->getData()['orderId'];
         } catch (\Throwable $e) {
-            //TODO: Redirect user to check
             return false;
         }
         //TODO: Compare invoice hash and query hash
         $_SESSION['coinsnap']['response']['status'] = $status;
-        if ($status != 'Processing' || $status != 'Settled') {
-            return false;
-        }
-        //TODO: Send email if selected in the settings?
-
-        return true;
+        return $status === 'Processing' || $status === 'Settled';
     }
 
     /**

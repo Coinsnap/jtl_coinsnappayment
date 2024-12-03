@@ -57,12 +57,12 @@ $notify_json = file_get_contents('php://input');
 
 $notify_ar = json_decode($notify_json, true);
 $invoice_id = $notify_ar['invoiceId'];
+$status = $notify_ar['type'];
 $ApiUrl = 'https://app.coinsnap.io';
 
 try {
     $client = new \Coinsnap\Client\Invoice($ApiUrl, $api_key);
     $csinvoice = $client->getInvoice($store_id, $invoice_id);
-    $status = $csinvoice->getData()['status'];
     $order_no = $csinvoice->getData()['orderId'];
 } catch (\Throwable $e) {
     echo "Error";
@@ -100,15 +100,6 @@ if (!\in_array((int)$order->cStatus, [\BESTELLUNG_STATUS_OFFEN, \BESTELLUNG_STAT
 }
 
 
-if ($status == 'Expired') {
-    $order_status = 'fail';
-} elseif ($status == 'Processing') {
-    $order_status = 'paid';
-} elseif ($status == 'Settled') {
-    $order_status = 'paid';
-}
-
-
 switch ($status) {
     case 'Processing':
         $payment->addIncomingPayment($order, (object)[
@@ -117,11 +108,8 @@ switch ($status) {
             'cHinweis'         => $csinvoice->getData()['invoiceId'],
         ]);
         $payment->setOrderStatusToPaid($order);
+        $payment->sendConfirmationMail($order);
         break;
-        // case 'Settled':
-        // case 'fail':
-        //      PayPalHelper::sendPaymentDeniedMail($order->oKunde, $order);
-        //      break;
 }
 echo "OK";
 exit;
