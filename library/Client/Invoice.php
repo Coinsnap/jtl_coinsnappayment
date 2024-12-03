@@ -7,7 +7,8 @@ namespace Coinsnap\Client;
 use Coinsnap\Result\InvoicePaymentMethod;
 use Coinsnap\Util\PreciseNumber;
 
-class Invoice extends AbstractClient{
+class Invoice extends AbstractClient
+{
     public function createInvoice(
         string $storeId,
         string $currency,
@@ -18,29 +19,34 @@ class Invoice extends AbstractClient{
         ?string $redirectUrl = null,
         ?string $referralCode = null,
         ?array $metaData = null,
-        ?InvoiceCheckoutOptions $checkoutOptions = null): \Coinsnap\Result\Invoice 
-    {
-        $url = $this->getApiUrl().''.COINSNAP_SERVER_PATH.'/'.urlencode($storeId).'/invoices';
+        ?InvoiceCheckoutOptions $checkoutOptions = null
+    ): \Coinsnap\Result\Invoice {
+        $url = $this->getApiUrl() . '' . COINSNAP_SERVER_PATH . '/' . urlencode($storeId) . '/invoices';
         $headers = $this->getRequestHeaders();
         $method = 'POST';
 
         // Prepare metadata.
-        if(!isset($metaData['orderNumber']) && !empty($orderId)) $metaData['orderNumber'] = $orderId;
-        if(!isset($metaData['customerName']) && !empty($customerName)) $metaData['customerName'] = $customerName;
+        if (!isset($metaData['orderNumber']) && !empty($orderId)) {
+            $metaData['orderNumber'] = $orderId;
+        }
+        if (!isset($metaData['customerName']) && !empty($customerName)) {
+            $metaData['customerName'] = $customerName;
+        }
 
         $body_array = array(
             'amount' => $amount !== null ? $amount->__toString() : null,
-                'currency' => $currency,
-                'buyerEmail' => $buyerEmail,
-                'redirectUrl' => $redirectUrl,
-                'orderId' => $orderId,
-                'metadata' => (count($metaData) > 0) ? $metaData : null,
-        //        'checkout' => $checkoutOptions ? $checkoutOptions->toArray() : null,
-                'referralCode' => $referralCode
+            'currency' => $currency,
+            'buyerEmail' => $buyerEmail,
+            'redirectUrl' => $redirectUrl,
+            'redirectAutomatically' => true,
+            'orderId' => $orderId,
+            'metadata' => (count($metaData) > 0) ? $metaData : null,
+            //        'checkout' => $checkoutOptions ? $checkoutOptions->toArray() : null,
+            'referralCode' => $referralCode
         );
-        
-        
-        $body = json_encode($body_array,JSON_THROW_ON_ERROR);
+
+
+        $body = json_encode($body_array, JSON_THROW_ON_ERROR);
 
         $response = $this->getHttpClient()->request($method, $url, $headers, $body);
 
@@ -55,9 +61,10 @@ class Invoice extends AbstractClient{
         }
     }
 
-    public function getInvoice(string $storeId,string $invoiceId): \Coinsnap\Result\Invoice {
-        
-        $url = $this->getApiUrl().''.COINSNAP_SERVER_PATH.'/'.urlencode($storeId).'/invoices/'.urlencode($invoiceId);
+    public function getInvoice(string $storeId, string $invoiceId): \Coinsnap\Result\Invoice
+    {
+
+        $url = $this->getApiUrl() . '' . COINSNAP_SERVER_PATH . '/' . urlencode($storeId) . '/invoices/' . urlencode($invoiceId);
         $headers = $this->getRequestHeaders();
         $method = 'GET';
         $response = $this->getHttpClient()->request($method, $url, $headers);

@@ -108,12 +108,10 @@ class CoinsnapPayment extends Method
         }
         //TODO: Compare invoice hash and query hash
         $_SESSION['coinsnap']['response']['status'] = $status;
-        if ($status != 'Processing' || $status != 'Settled') {
-            return false;
-        }
-        //TODO: Send email if selected in the settings?
-
-        return true;
+        // if ($status != 'Processing' || $status != 'Settled') {
+        //     return false;
+        // }
+        return $status === 'Processing' || $status === 'Settled';
     }
 
     /**
