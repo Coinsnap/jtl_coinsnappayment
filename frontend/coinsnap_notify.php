@@ -103,8 +103,6 @@ if (!\in_array((int)$order->cStatus, [\BESTELLUNG_STATUS_OFFEN, \BESTELLUNG_STAT
 switch ($status) {
     case 'Processing':
         $payment->addIncomingPayment($order, (object)[
-            'fBetrag'          => $csinvoice->getData()['amount'],
-            'cISO' => $csinvoice->getData()['currency'],
             'cHinweis'         => $csinvoice->getData()['invoiceId'],
         ]);
         $payment->setOrderStatusToPaid($order);
