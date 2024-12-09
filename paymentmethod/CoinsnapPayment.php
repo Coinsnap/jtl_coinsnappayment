@@ -133,8 +133,6 @@ class CoinsnapPayment extends Method
         $allowedStatuses = ['Processing', 'Settled'];
         if (isset($_SESSION['coinsnap']['response']['status']) && in_array($_SESSION['coinsnap']['response']['status'], $allowedStatuses)) {
             $this->addIncomingPayment($order, (object)[
-                'fBetrag'           => $_SESSION['coinsnap']['response']['amount'],
-                'cISO'  => $_SESSION['coinsnap']['response']['currency'],
                 'cHinweis'  => $_SESSION['coinsnap']['response']['id'],
             ]);
             $this->setOrderStatusToPaid($order);
@@ -161,9 +159,10 @@ class CoinsnapPayment extends Method
 
         $webhook_url = $this->get_webhook_url();
 
+
         if (! $this->webhookExists($this->getStoreId(), $this->getApiKey(), $webhook_url)) {
             if (! $this->registerWebhook($this->getStoreId(), $this->getApiKey(), $webhook_url)) {
-                echo ('unable to set Webhook url ('.$webhook_url.')');
+                echo('unable to set Webhook url');
                 exit;
             }
         }
