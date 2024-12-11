@@ -29,8 +29,6 @@ if (!\file_exists($bootstrapper)) {
 
 require_once $bootstrapper;
 
-
-
 $db = Shop::Container()->getDB();
 $logger = Shop::Container()->getLogService();
 $oPlugin = Helper::getPluginById('jtl_coinsnappayment');
@@ -45,7 +43,7 @@ $moduleID   = 'kPlugin_' . $oPlugin->getID() . '_coinsnappayment';
 
 $payment = LegacyMethod::create($moduleID);
 if ($payment === null) {
-    Shop::Container()->getLogService()->error('Coinsnap Notify: Missing payment provider');
+    Shop::Container()->getLogService()->debug('Coinsnap Notify: Missing payment provider');
     $exit(true);
 }
 

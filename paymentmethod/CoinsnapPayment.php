@@ -28,9 +28,8 @@ class CoinsnapPayment extends Method
     /** @var bool */
     private bool $payAgain;
 
-    public const WEBHOOK_EVENTS = ['New', 'Expired', 'Settled', 'Processing'];
+    public const WEBHOOK_EVENTS = ['Expired', 'Settled', 'Processing'];
     public const REFERRAL_CODE = 'D18284';
-
 
     /**
      * @inheritDoc
@@ -81,7 +80,6 @@ class CoinsnapPayment extends Method
         $store_id     = $this->getSetting('store_id') ?? '';
         $api_key = $this->getSetting('api_key') ?? '';
 
-
         return parent::isValidIntern($args_arr) && $api_key !== '' && $store_id !== '';
     }
 
@@ -90,11 +88,8 @@ class CoinsnapPayment extends Method
      */
     public function finalizeOrder(Bestellung $order, string $hash, array $args): bool
     {
-        parent::finalizeOrder($order, $hash, $args);
-
-
         $invoiceId = $_SESSION['coinsnap']['response']['id'];
-        $client = new \Coinsnap\Client\Invoice($this->getApiUrl(), $this->getApiKey());
+
         try {
             $client = new \Coinsnap\Client\Invoice($this->getApiUrl(), $this->getApiKey());
             $csinvoice = $client->getInvoice($this->getStoreId(), $invoiceId);
@@ -102,6 +97,7 @@ class CoinsnapPayment extends Method
         } catch (\Throwable $e) {
             return false;
         }
+
         //TODO: Compare invoice hash and query hash
         $_SESSION['coinsnap']['response']['status'] = $status;
         return $status === 'Processing' || $status === 'Settled';
@@ -128,15 +124,18 @@ class CoinsnapPayment extends Method
      */
     public function handleNotification(Bestellung $order, string $hash, array $args): void
     {
-        parent::handleNotification($order, $hash, $args);
         //TODO: Consider partial payment and paid after expiration
         $allowedStatuses = ['Processing', 'Settled'];
         if (isset($_SESSION['coinsnap']['response']['status']) && in_array($_SESSION['coinsnap']['response']['status'], $allowedStatuses)) {
+
             $this->addIncomingPayment($order, (object)[
                 'cHinweis'  => $_SESSION['coinsnap']['response']['id'],
             ]);
             $this->setOrderStatusToPaid($order);
             $this->sendConfirmationMail($order);
+
+            Shop::Container()->getDB()->update('tbestellung', 'kBestellung',  $order->kBestellung, null, false);
+
             //TODO: Send confirmation email
             unset($_SESSION['coinsnap']);
         }
@@ -155,10 +154,7 @@ class CoinsnapPayment extends Method
      */
     public function preparePaymentProcess(Bestellung $order): void
     {
-        parent::preparePaymentProcess($order);
-
         $webhook_url = $this->get_webhook_url();
-
 
         if (! $this->webhookExists($this->getStoreId(), $this->getApiKey(), $webhook_url)) {
             if (! $this->registerWebhook($this->getStoreId(), $this->getApiKey(), $webhook_url)) {
@@ -166,9 +162,6 @@ class CoinsnapPayment extends Method
                 exit;
             }
         }
-
-        // $smarty       = Shop::Smarty();
-        // $localization = $this->plugin->getLocalization();
 
         if ($this->payAgain) {
             $paymentHash = $this->getOrderHash($order);
