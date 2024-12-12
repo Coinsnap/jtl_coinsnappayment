@@ -31,6 +31,7 @@ class CoinsnapPayment extends Method
     public const WEBHOOK_EVENTS = ['Expired', 'Settled', 'Processing'];
     public const REFERRAL_CODE = 'D18284';
 
+
     /**
      * @inheritDoc
      */
@@ -38,9 +39,9 @@ class CoinsnapPayment extends Method
     {
         parent::init($nAgainCheckout);
 
-        $pluginID       = PluginHelper::getIDByModuleID($this->moduleID);
-        $this->plugin   = PluginHelper::getLoaderByPluginID($pluginID)->init($pluginID);
-        $this->method   = $this->plugin->getPaymentMethods()->getMethodByID($this->moduleID);
+        $pluginID = PluginHelper::getIDByModuleID($this->moduleID);
+        $this->plugin = PluginHelper::getLoaderByPluginID($pluginID)->init($pluginID);
+        $this->method = $this->plugin->getPaymentMethods()->getMethodByID($this->moduleID);
         $this->payAgain = $nAgainCheckout > 0;
 
         return $this;
@@ -77,7 +78,7 @@ class CoinsnapPayment extends Method
             return false;
         }
 
-        $store_id     = $this->getSetting('store_id') ?? '';
+        $store_id = $this->getSetting('store_id') ?? '';
         $api_key = $this->getSetting('api_key') ?? '';
 
         return parent::isValidIntern($args_arr) && $api_key !== '' && $store_id !== '';
@@ -129,15 +130,18 @@ class CoinsnapPayment extends Method
         if (isset($_SESSION['coinsnap']['response']['status']) && in_array($_SESSION['coinsnap']['response']['status'], $allowedStatuses)) {
 
             $this->addIncomingPayment($order, (object)[
-                'cHinweis'  => $_SESSION['coinsnap']['response']['id'],
+              'cHinweis' => $_SESSION['coinsnap']['response']['id'],
             ]);
             $this->setOrderStatusToPaid($order);
             $this->sendConfirmationMail($order);
-
-            Shop::Container()->getDB()->update('tbestellung', 'kBestellung',  $order->kBestellung, null, false);
-
-            //TODO: Send confirmation email
             unset($_SESSION['coinsnap']);
+            $orderHash = $this->generateHash($order);
+            $redirectUrl = Shop::Container()->getLinkService()->getStaticRoute('bestellabschluss.php') . '?i=' . $orderHash;
+            header('Location: ' . $redirectUrl);
+            exit;
+        } else {
+            header('Location:' . Shop::getURL() . '/Bestellvorgang?editVersandart=1');
+            exit;
         }
     }
 
@@ -156,8 +160,8 @@ class CoinsnapPayment extends Method
     {
         $webhook_url = $this->get_webhook_url();
 
-        if (! $this->webhookExists($this->getStoreId(), $this->getApiKey(), $webhook_url)) {
-            if (! $this->registerWebhook($this->getStoreId(), $this->getApiKey(), $webhook_url)) {
+        if (!$this->webhookExists($this->getStoreId(), $this->getApiKey(), $webhook_url)) {
+            if (!$this->registerWebhook($this->getStoreId(), $this->getApiKey(), $webhook_url)) {
                 echo('unable to set Webhook url');
                 exit;
             }
@@ -167,8 +171,8 @@ class CoinsnapPayment extends Method
             $paymentHash = $this->getOrderHash($order);
             if ($paymentHash === null) {
                 $this->getDB()->insert('tbestellid', (object)[
-                    'kBestellung' => $order->kBestellung,
-                    'cId'         => \uniqid('', true)
+                  'kBestellung' => $order->kBestellung,
+                  'cId' => \uniqid('', true)
                 ]);
                 $paymentHash = $this->generateHash($order);
             }
@@ -180,10 +184,7 @@ class CoinsnapPayment extends Method
             $return_url = $this->getNotificationURL($paymentHash);
         }
 
-
-
-        // $return_url = $this->getReturnURL($order);
-        $amount = (float) $order->fGesamtsumme * $_SESSION['Waehrung']->fFaktor;
+        $amount = (float)$order->fGesamtsumme * $_SESSION['Waehrung']->fFaktor;
         $currency = strtoupper($order->Waehrung->cISO);
         $buyerEmail = $order->oRechnungsadresse->cMail;
         $buyerName = $order->oRechnungsadresse->cVorname . ' ' . $order->oRechnungsadresse->cNachname;
@@ -200,16 +201,16 @@ class CoinsnapPayment extends Method
         $metadata['paymentHash'] = $paymentHash;
 
         $csinvoice = $client->createInvoice(
-            $this->getStoreId(),
-            strtoupper($currency),
-            $camount,
-            $invoice_no,
-            $buyerEmail,
-            $buyerName,
-            $return_url,
-            self::REFERRAL_CODE,
-            $metadata,
-            $checkoutOptions
+          $this->getStoreId(),
+          strtoupper($currency),
+          $camount,
+          $invoice_no,
+          $buyerEmail,
+          $buyerName,
+          $return_url,
+          self::REFERRAL_CODE,
+          $metadata,
+          $checkoutOptions
         );
 
 
@@ -226,11 +227,13 @@ class CoinsnapPayment extends Method
     {
         return Shop::getURL() . '/coinsnap-notify';
     }
+
     public function getStoreId()
     {
 
         return $this->getSetting('store_id');
     }
+
     public function getApiKey()
     {
         return $this->getSetting('api_key');
@@ -259,16 +262,17 @@ class CoinsnapPayment extends Method
 
         return false;
     }
+
     public function registerWebhook(string $storeId, string $apiKey, string $webhook): bool
     {
         try {
             $whClient = new \Coinsnap\Client\Webhook($this->getApiUrl(), $apiKey);
 
             $webhook = $whClient->createWebhook(
-                $storeId,   //$storeId
-                $webhook, //$url
-                self::WEBHOOK_EVENTS,
-                null    //$secret
+              $storeId,   //$storeId
+              $webhook, //$url
+              self::WEBHOOK_EVENTS,
+              null    //$secret
             );
 
             return true;
@@ -286,8 +290,8 @@ class CoinsnapPayment extends Method
             $whClient = new \Coinsnap\Client\Webhook($this->getApiUrl(), $apiKey);
 
             $webhook = $whClient->deleteWebhook(
-                $storeId,   //$storeId
-                $webhookid, //$url
+              $storeId,   //$storeId
+              $webhookid, //$url
             );
             return true;
         } catch (\Throwable $e) {
