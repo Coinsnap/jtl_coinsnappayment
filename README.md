@@ -84,17 +84,39 @@ Simply register in [Coinsnap](https://app.coinsnap.io/), enter your own Lightnin
 
 # Installation
 
-1. Login to the JTL Admin Panel
+### 1. Download plugin ###
 
-2. Navigate to Plug-in manager, choose Upload tab, drag-and-drop zip file with plugin in file zone or select it in the file field and upload.
+![Plugin downloading from Github repository](/assets/images/screenshot-3.png)
 
-3. Select JTL Coinsnap Payment, install and activate it.
+You can download Coinsnap JTL Store plugin from Coinsnap Github page
+
+### 2. Add plugin ###
+
+2.1. Login to the JTL Admin Panel
+
+![JTL Admin Panel](/assets/images/screenshot-1.png)
+
+2.2. Navigate to Plug-in manager, choose Upload tab, drag-and-drop zip file with plugin in file zone or select it in the file field and upload.
+
+![Navigate to Plug-in manager, upload the plugin](/assets/images/screenshot-2.png)
+
+2.3. Select JTL Coinsnap Payment, install and activate it.
+
+![Select JTL Coinsnap Payment, install and activate it](/assets/images/screenshot-4.png)
 
 4. Navigate to Payment methods, find Coinsnap Payment and click "Edit" button
 
+![Payment methods](/assets/images/screenshot-5.png)
+
 5. Enter config info (Store Id and API Key), needed names and notes, set needed options and press "Save" button.
 
+![Plugin config](/assets/images/screenshot-8.png)
+
 Now your shop is ready to accept Bitcoin and Lightning payments.
+
+# Test payment
+
+
 
 # Changelog
 
