@@ -1,4 +1,5 @@
 # Coinsnap for JTL Payment Plugin
+![Coinsnap for JTL Payment](assets/images/1.png)
 
 Accept Bitcoin and Ligtning payments in JTL with Coinsnap
 
@@ -19,6 +20,10 @@ License: GPL-2.0
 License URI: https://github.com/Coinsnap/Coinsnap-for-JTL/blob/main/LICENSE
 
 With Coinsnap payment processing, you can accept Bitcoin and Lightning payments on your website or online store. You don’t need your own Lightning Node or other technical requirements.
+
+* Coinsnap for JTL Demo Site: https://jtl.coinsnap.org/
+* Blog Article: https://coinsnap.io/en/coinsnap-for-jtl-store/
+* GitHub: https://github.com/Coinsnap/jtl_coinsnappayment
 
 Bitcoin and Lightning payments from your customers will be credited directly to your own Lightning address.
 
