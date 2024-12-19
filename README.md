@@ -1,5 +1,5 @@
 # Coinsnap for JTL Payment Plugin
-![Coinsnap for JTL Payment](assets/images/1.png)
+![Coinsnap for JTL Payment](/assets/images/1.png)
 
 Accept Bitcoin and Ligtning payments in JTL with Coinsnap
 
