@@ -101,8 +101,7 @@ Now your shop is ready to accept Bitcoin and Lightning payments.
 
 ### Bug fixed
 
-- Webhook events list is updated.
-
+- Webhook events list is updated. Redirection and order number logic updated.
 
 ## [1.0.1]
 
