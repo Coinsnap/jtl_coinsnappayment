@@ -112,7 +112,7 @@ You can download Coinsnap JTL Store plugin from Coinsnap Github page
 
 2.5. Enter config info (Store Id and API Key), needed names and notes, set needed options and press "Save" button.
 
-![Plugin config](/assets/images/screenshot-8.png)
+![Plugin config](/assets/images/screenshot-6.png)
 
 Now your shop is ready to accept Bitcoin and Lightning payments.
 
@@ -154,7 +154,25 @@ https://coinsnap.io/lightning-wallet-mit-lightning-adresse/
 
 ### 4. Test payment
 
+![Demo product](/assets/images/screenshot-8.png)
 
+On our demo store page you will find our demo product, a T-shirt. Select it to test payment with Bitcoin and Lightning.
+
+4.1. Add to shopping cart
+
+Click on the “Add to cart” button to start the payment test.
+
+![Add to shopping cart](/assets/images/screenshot-11.png)
+
+4.2. After you have filled out the form with your access data, you will see the overview of your order and the confirmation, which shows you the “Pay with Bitcoin+Lightning” button.
+
+![Pay with Bitcoin+Lightning](/assets/images/screenshot-9.png)
+
+Click on it to continue!
+
+4.3. At the end you will receive a QR code that you should scan with your wallet to pay with Coinsnap Bitcoin and Lighhtning!
+
+![QR code](/assets/images/screenshot-10.png)
 
 # Changelog
 
