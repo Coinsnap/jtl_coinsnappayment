@@ -138,6 +138,7 @@ You will receive an email to the given email address with a confirmation link, w
 
 ![E-mail address confirmation](https://resources.coinsnap.org/products/jtl-store/images/screenshot-13.png)
 
+
 Then please log in to the Coinsnap backend with the appropriate credentials.
 
 3.3. Set up website at Coinsnap
@@ -179,6 +180,7 @@ Click on it to continue!
 ![QR code](https://resources.coinsnap.org/products/jtl-store/images/screenshot-10.png)
 
 # Changelog
+
 
 ## [1.0.1]
 
