@@ -96,6 +96,12 @@ class CoinsnapPayment extends Method
             $csinvoice = $client->getInvoice($this->getStoreId(), $invoiceId);
             $status = $csinvoice->getData()['status'];
         } catch (\Throwable $e) {
+            //TODO: Redirect user to check
+            return false;
+        }
+        //TODO: Compare invoice hash and query hash
+        $_SESSION['coinsnap']['invoice_status'] = $status;
+        if ( $status != 'Settled') {
             return false;
         }
 
@@ -126,8 +132,8 @@ class CoinsnapPayment extends Method
     public function handleNotification(Bestellung $order, string $hash, array $args): void
     {
         //TODO: Consider partial payment and paid after expiration
-        $allowedStatuses = ['Processing', 'Settled'];
-        if (isset($_SESSION['coinsnap']['response']['status']) && in_array($_SESSION['coinsnap']['response']['status'], $allowedStatuses)) {
+        $allowedStatuses = [ 'Settled'];
+        if (isset($_SESSION['coinsnap']['invoice_status']) && in_array($_SESSION['coinsnap']['invoice_status'], $allowedStatuses)) {
 
             $this->addIncomingPayment($order, (object)[
               'cHinweis' => $_SESSION['coinsnap']['response']['id'],

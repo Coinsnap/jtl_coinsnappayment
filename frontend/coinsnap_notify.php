@@ -98,8 +98,17 @@ if (!\in_array((int)$order->cStatus, [\BESTELLUNG_STATUS_OFFEN, \BESTELLUNG_STAT
 }
 
 
+
+if ($status == 'Expired') {
+    $order_status = 'fail';
+} elseif ($status == 'Settled') {
+    $order_status = 'paid';
+}
+
+
+
 switch ($status) {
-    case 'Processing':
+    case 'Settled':
         $payment->addIncomingPayment($order, (object)[
             'cHinweis'         => $csinvoice->getData()['invoiceId'],
         ]);
