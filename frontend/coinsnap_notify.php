@@ -29,8 +29,6 @@ if (!\file_exists($bootstrapper)) {
 
 require_once $bootstrapper;
 
-
-
 $db = Shop::Container()->getDB();
 $logger = Shop::Container()->getLogService();
 $oPlugin = Helper::getPluginById('jtl_coinsnappayment');
@@ -45,7 +43,7 @@ $moduleID   = 'kPlugin_' . $oPlugin->getID() . '_coinsnappayment';
 
 $payment = LegacyMethod::create($moduleID);
 if ($payment === null) {
-    Shop::Container()->getLogService()->error('Coinsnap Notify: Missing payment provider');
+    Shop::Container()->getLogService()->debug('Coinsnap Notify: Missing payment provider');
     $exit(true);
 }
 
@@ -57,12 +55,12 @@ $notify_json = file_get_contents('php://input');
 
 $notify_ar = json_decode($notify_json, true);
 $invoice_id = $notify_ar['invoiceId'];
+$status = $notify_ar['type'];
 $ApiUrl = 'https://app.coinsnap.io';
 
 try {
     $client = new \Coinsnap\Client\Invoice($ApiUrl, $api_key);
     $csinvoice = $client->getInvoice($store_id, $invoice_id);
-    $status = $csinvoice->getData()['status'];
     $order_no = $csinvoice->getData()['orderId'];
 } catch (\Throwable $e) {
     echo "Error";
@@ -100,6 +98,7 @@ if (!\in_array((int)$order->cStatus, [\BESTELLUNG_STATUS_OFFEN, \BESTELLUNG_STAT
 }
 
 
+
 if ($status == 'Expired') {
     $order_status = 'fail';
 } elseif ($status == 'Settled') {
@@ -107,19 +106,15 @@ if ($status == 'Expired') {
 }
 
 
+
 switch ($status) {
     case 'Settled':
         $payment->addIncomingPayment($order, (object)[
-            'fBetrag'          => $invoice->getData()['amount'],
-            'fcISO' => $invoice->getData()['currency'],
-            'cHinweis'         => $invoice->getData()['invoiceId'],
+            'cHinweis'         => $csinvoice->getData()['invoiceId'],
         ]);
         $payment->setOrderStatusToPaid($order);
+        $payment->sendConfirmationMail($order);
         break;
-        // case 'Settled':
-        // case 'fail':
-        //      PayPalHelper::sendPaymentDeniedMail($order->oKunde, $order);
-        //      break;
 }
 echo "OK";
 exit;

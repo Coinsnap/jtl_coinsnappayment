@@ -3,7 +3,7 @@
     <Name>JTL Coinsnap Payment</Name>
     <Description>JTL Coinsnap Payment</Description>
     <Author>Coinsnap</Author>
-    <URL>https://coinsnap.io</URL>    
+    <URL>https://coinsnap.io</URL>
     <PluginID>jtl_coinsnappayment</PluginID>
     <XMLVersion>100</XMLVersion>
     <ShopVersion>5.2.3</ShopVersion>
@@ -35,7 +35,7 @@
                       <Name>API Key</Name>
                       <Description>Please enter your Coinsnap API Key.</Description>
                       <ValueName>api_key</ValueName>
-                  </Setting>   
+                  </Setting>
                 <MethodLanguage iso="GER">
                     <Name>Coinsnap Zahlung</Name>
                     <ChargeName>Coinsnap Zahlung</ChargeName>
@@ -46,7 +46,7 @@
                     <ChargeName>Coinsnap Payment</ChargeName>
                     <InfoText>Bitcoin + Lightning payment</InfoText>
                 </MethodLanguage>
-                
+
             </Method>
         </PaymentMethod>
         <Locales>
@@ -54,7 +54,7 @@
                 <Name>head_info_about_your_payment</Name>
                 <VariableLocalized iso="GER">Informationen zu Ihrer Zahlung</VariableLocalized>
                 <VariableLocalized iso="ENG">Information about your payment</VariableLocalized>
-            </Variable>            
+            </Variable>
         </Locales>
         <FrontendLink>
             <Link>
@@ -71,7 +71,7 @@
                     <MetaTitle>coinsnap</MetaTitle>
                     <MetaKeywords>coinsnap</MetaKeywords>
                     <MetaDescription>coinsnap</MetaDescription>
-                </LinkLanguage>                
+                </LinkLanguage>
                 <LinkLanguage iso="ENG">
                     <Seo>coinsnap-notify</Seo>
                     <Name>coinsnap</Name>
@@ -81,6 +81,6 @@
                     <MetaDescription>coinsnap</MetaDescription>
                 </LinkLanguage>
             </Link>
-         </FrontendLink>    
+         </FrontendLink>
     </Install>
 </jtlshopplugin>
