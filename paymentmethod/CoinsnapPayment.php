@@ -101,7 +101,7 @@ class CoinsnapPayment extends Method
         }
         //TODO: Compare invoice hash and query hash
         $_SESSION['coinsnap']['invoice_status'] = $status;
-        if ( $status != 'Settled') {
+        if ($status != 'Processing' && $status != 'Settled') {
             return false;
         }
 
@@ -132,14 +132,17 @@ class CoinsnapPayment extends Method
     public function handleNotification(Bestellung $order, string $hash, array $args): void
     {
         //TODO: Consider partial payment and paid after expiration
-        $allowedStatuses = [ 'Settled'];
+        $allowedStatuses = ['Processing', 'Settled'];
         if (isset($_SESSION['coinsnap']['invoice_status']) && in_array($_SESSION['coinsnap']['invoice_status'], $allowedStatuses)) {
+            $orderStatus = $_SESSION['coinsnap']['invoice_status'];
 
-            $this->addIncomingPayment($order, (object)[
-              'cHinweis' => $_SESSION['coinsnap']['response']['id'],
-            ]);
-            $this->setOrderStatusToPaid($order);
-            $this->sendConfirmationMail($order);
+            if ($orderStatus == 'Settled') {
+                $this->addIncomingPayment($order, (object)[
+                    'cHinweis' => $_SESSION['coinsnap']['response']['id'],
+                ]);
+                $this->setOrderStatusToPaid($order);
+                $this->sendConfirmationMail($order);
+            }
             unset($_SESSION['coinsnap']);
             $orderHash = $this->generateHash($order);
             $redirectUrl = Shop::Container()->getLinkService()->getStaticRoute('bestellabschluss.php') . '?i=' . $orderHash;
@@ -168,7 +171,7 @@ class CoinsnapPayment extends Method
 
         if (!$this->webhookExists($this->getStoreId(), $this->getApiKey(), $webhook_url)) {
             if (!$this->registerWebhook($this->getStoreId(), $this->getApiKey(), $webhook_url)) {
-                echo('unable to set Webhook url');
+                echo ('unable to set Webhook url');
                 exit;
             }
         }
@@ -177,8 +180,8 @@ class CoinsnapPayment extends Method
             $paymentHash = $this->getOrderHash($order);
             if ($paymentHash === null) {
                 $this->getDB()->insert('tbestellid', (object)[
-                  'kBestellung' => $order->kBestellung,
-                  'cId' => \uniqid('', true)
+                    'kBestellung' => $order->kBestellung,
+                    'cId' => \uniqid('', true)
                 ]);
                 $paymentHash = $this->generateHash($order);
             }
@@ -207,16 +210,16 @@ class CoinsnapPayment extends Method
         $metadata['paymentHash'] = $paymentHash;
 
         $csinvoice = $client->createInvoice(
-          $this->getStoreId(),
-          strtoupper($currency),
-          $camount,
-          $invoice_no,
-          $buyerEmail,
-          $buyerName,
-          $return_url,
-          self::REFERRAL_CODE,
-          $metadata,
-          $checkoutOptions
+            $this->getStoreId(),
+            strtoupper($currency),
+            $camount,
+            $invoice_no,
+            $buyerEmail,
+            $buyerName,
+            $return_url,
+            self::REFERRAL_CODE,
+            $metadata,
+            $checkoutOptions
         );
 
 
@@ -275,10 +278,10 @@ class CoinsnapPayment extends Method
             $whClient = new \Coinsnap\Client\Webhook($this->getApiUrl(), $apiKey);
 
             $webhook = $whClient->createWebhook(
-              $storeId,   //$storeId
-              $webhook, //$url
-              self::WEBHOOK_EVENTS,
-              null    //$secret
+                $storeId,   //$storeId
+                $webhook, //$url
+                self::WEBHOOK_EVENTS,
+                null    //$secret
             );
 
             return true;
@@ -296,8 +299,8 @@ class CoinsnapPayment extends Method
             $whClient = new \Coinsnap\Client\Webhook($this->getApiUrl(), $apiKey);
 
             $webhook = $whClient->deleteWebhook(
-              $storeId,   //$storeId
-              $webhookid, //$url
+                $storeId,   //$storeId
+                $webhookid, //$url
             );
             return true;
         } catch (\Throwable $e) {
