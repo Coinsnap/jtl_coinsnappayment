@@ -102,15 +102,13 @@ if (!\in_array((int)$order->cStatus, [\BESTELLUNG_STATUS_OFFEN, \BESTELLUNG_STAT
 
 if ($status == 'Expired') {
     $order_status = 'fail';
-} elseif ($status == 'Processing') {
-    $order_status = 'paid';
 } elseif ($status == 'Settled') {
     $order_status = 'paid';
 }
 
 
 switch ($status) {
-    case 'Processing':
+    case 'Settled':
         $payment->addIncomingPayment($order, (object)[
             'fBetrag'          => $invoice->getData()['amount'],
             'fcISO' => $invoice->getData()['currency'],

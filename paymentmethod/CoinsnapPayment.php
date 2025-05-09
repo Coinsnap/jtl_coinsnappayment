@@ -105,7 +105,7 @@ class CoinsnapPayment extends Method
         }
         //TODO: Compare invoice hash and query hash
         $_SESSION['coinsnap']['invoice_status'] = $status;
-        if ($status != 'Processing' && $status != 'Settled') {
+        if ( $status != 'Settled') {
             return false;
         }
         //TODO: Send email if selected in the settings?
@@ -136,7 +136,7 @@ class CoinsnapPayment extends Method
     {
         parent::handleNotification($order, $hash, $args);
         //TODO: Consider partial payment and paid after expiration
-        $allowedStatuses = ['Processing', 'Settled'];
+        $allowedStatuses = [ 'Settled'];
         if (isset($_SESSION['coinsnap']['invoice_status']) && in_array($_SESSION['coinsnap']['invoice_status'], $allowedStatuses)) {
             $this->addIncomingPayment($order, (object)[
                 'fBetrag'           => $order->fGesamtsumme,
