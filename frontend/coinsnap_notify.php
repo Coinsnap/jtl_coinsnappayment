@@ -99,7 +99,7 @@ if (!\in_array((int)$order->cStatus, [\BESTELLUNG_STATUS_OFFEN, \BESTELLUNG_STAT
 
 
 switch ($status) {
-    case 'Settled':
+    case 'Processing':
         $payment->addIncomingPayment($order, (object)[
             'cHinweis'         => $csinvoice->getData()['invoiceId'],
         ]);

@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Coinsnap\Client;
 
 use Coinsnap\Client\Webhook;

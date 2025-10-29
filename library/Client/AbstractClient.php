@@ -1,7 +1,5 @@
 <?php
-
 declare(strict_types=1);
-
 namespace Coinsnap\Client;
 
 use Coinsnap\Exception\BadRequestException;
@@ -58,22 +56,20 @@ class AbstractClient{
         return [
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
-            'x-api-key' => $this->getApiKey()
+            'x-api-key' => $this->getApiKey(),
+            'Authorization' => 'token '.$this->getApiKey()
         ];
     }
-
-    protected function getExceptionByStatusCode(
-        string $method,
-        string $url,
-        Response $response
-    ): RequestException {
+    
+    protected function getExceptionByStatusCode(string $method, string $url, int $status, string $body): RequestException {
+        
         $exceptions = [
             ForbiddenException::STATUS => ForbiddenException::class,
             BadRequestException::STATUS => BadRequestException::class,
         ];
 
-        $class = $exceptions[$response->getStatus()] ?? RequestException::class;
-        $e = new $class($method, $url, $response);
+        $class = $exceptions[$status] ?? RequestException::class;
+        $e = new $class($method, $url, $status, $body);
         return $e;
     }
 }

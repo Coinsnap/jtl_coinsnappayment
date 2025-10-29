@@ -7,8 +7,8 @@
     <PluginID>jtl_coinsnappayment</PluginID>
     <XMLVersion>100</XMLVersion>
     <ShopVersion>5.2.3</ShopVersion>
-    <Version>1.0.3</Version>    
-    <CreateDate>2025-05-09</CreateDate>
+    <Version>1.1.0</Version>
+    <CreateDate>2025-10-27</CreateDate>
     <Install>
         <PaymentMethod>
             <Method>
@@ -26,16 +26,99 @@
                 <TemplateFile>template/coinsnap_payment.tpl</TemplateFile>
                 <AdditionalTemplateFile>template/coinsnap_payment.tpl</AdditionalTemplateFile>
                 <ClassName>CoinsnapPayment</ClassName>
-                <Setting type="text" initialValue="" sort="1" conf="Y">
-                      <Name>Store ID</Name>
-                      <Description>Please enter your Coinsnap Store ID.</Description>
-                      <ValueName>store_id</ValueName>
-                  </Setting>
-                  <Setting type="text" initialValue="" sort="2" conf="Y">
-                      <Name>API Key</Name>
-                      <Description>Please enter your Coinsnap API Key.</Description>
-                      <ValueName>api_key</ValueName>
-                  </Setting>
+                <Setting type="selectbox" initialValue="coinsnap" sort="10" conf="Y">
+                    <Name>Payment provider</Name>
+                    <Description>Choose provider: Coinsnap or BTCPay Server</Description>
+                    <ValueName>provider</ValueName>
+                    <SelectboxOptions>
+                        <Option valu="coinsnap" sort="10">Coinsnap</Option>
+                        <Option value="btcpay" sort="20">BTCPay server</Option>
+                    </SelectboxOptions>
+                    <Section>Connection settings</Section>
+                </Setting>
+                <Setting type="text" initialValue="" sort="20" conf="Y">
+                    <Name>Coinsnap Store ID</Name>
+                    <Description>Please enter your Coinsnap Store ID.</Description>
+                    <ValueName>store_id</ValueName>
+                    <Section>Connection settings</Section>
+                </Setting>
+                <Setting type="text" initialValue="" sort="30" conf="Y">
+                    <Name>Coinsnap API Key</Name>
+                    <Description>Please enter your Coinsnap API Key.</Description>
+                    <ValueName>api_key</ValueName>
+                    <Section>Connection settings</Section>
+                </Setting>
+                <Setting type="url" initialValue="" sort="40" conf="Y">
+                    <Name>BTCPay Server URL</Name>
+                    <Description>Please enter your BTCPay Server URL.</Description>
+                    <ValueName>btcpay_server_url</ValueName>
+                    <Section>Connection settings</Section>
+                </Setting>
+                <Setting type="text" initialValue="" sort="50" conf="Y">
+                    <Name>BTCPay Store ID</Name>
+                    <Description>Please enter your BTCPay Store ID.</Description>
+                    <ValueName>btcpay_store_id</ValueName>
+                    <Section>Connection settings</Section>
+                </Setting>
+                <Setting type="text" initialValue="" sort="60" conf="Y">
+                    <Name>BTCPay API Key</Name>
+                    <Description>Please enter your BTCPay API Key.</Description>
+                    <ValueName>btcpay_api_key</ValueName>
+                    <Section>Connection settings</Section>
+                </Setting>
+                <Setting type="none" initialValue="" sort="70" conf="Y">
+                    <Name>Webhook</Name>
+                    <ValueName>webhook</ValueName>
+                    <Section>Connection settings</Section>
+                </Setting>
+                <Setting type="checkbox" initialValue="1" sort="80" conf="Y">
+                    <Name>Redirect after payment</Name>
+                    <Description>Redirect to Thank You page after payment automatically.</Description>
+                    <ValueName>autoredirect</ValueName>
+                    <Section>Connection settings</Section>
+                </Setting>
+                <Setting type="text" initialValue="" sort="90" conf="Y">
+                    <Name>Return URL after payment</Name>
+                    <Description>Custom return URL after successful payment (default URL if blank).</Description>
+                    <ValueName>returnurl</ValueName>
+                    <Section>Connection settings</Section>
+                </Setting>
+                
+                <Setting type="checkbox" initialValue="0" sort="100" conf="Y">
+                    <Name>Discount enabled</Name>
+                    <Description>Discount enabled.</Description>
+                    <ValueName>discount_enabled</ValueName>
+                    <Section>Discount settings</Section>
+                </Setting>
+                <Setting type="selectbox" initialValue="amount" sort="110" conf="Y">
+                    <Name>Discount type</Name>
+                    <Description>Choose discount type: amount or percents</Description>
+                    <ValueName>discount_type</ValueName>
+                    <SelectboxOptions>
+                        <Option valu="fixed" sort="10">Fixed</Option>
+                        <Option value="percentage" sort="20">Percentage</Option>
+                    </SelectboxOptions>
+                    <Section>Discount settings</Section>
+                </Setting>
+                <Setting type="text" initialValue="" sort="120" conf="Y">
+                    <Name>Discount amount</Name>
+                    <Description>Discount amount</Description>
+                    <ValueName>discount_amount</ValueName>
+                    <Section>Discount settings</Section>
+                </Setting>
+                <Setting type="text" initialValue="" sort="120" conf="Y">
+                    <Name>Max discount amount, %</Name>
+                    <Description>Max discount amount for fixed discount, %</Description>
+                    <ValueName>discount_amount_limit</ValueName>
+                    <Section>Discount settings</Section>
+                </Setting>
+                <Setting type="text" initialValue="" sort="120" conf="Y">
+                    <Name>Discount amount, %</Name>
+                    <Description>Discount amount in percents (%)</Description>
+                    <ValueName>discount_amount_percentage</ValueName>
+                    <Section>Discount settings</Section>
+                </Setting>
+                
                 <MethodLanguage iso="GER">
                     <Name>Coinsnap Zahlung</Name>
                     <ChargeName>Coinsnap Zahlung</ChargeName>

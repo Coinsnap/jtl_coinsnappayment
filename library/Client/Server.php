@@ -14,7 +14,7 @@ class Server extends AbstractClient {
         if ($response->getStatus() === 200) {
             return new ServerInfo(json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR));
         } else {
-            throw $this->getExceptionByStatusCode($method, $url, $response);
+            throw $this->getExceptionByStatusCode($method, $url, (int)$response->getStatus(), $response->getBody());
         }
     }
     
@@ -28,7 +28,7 @@ class Server extends AbstractClient {
         if ($response->getStatus() === 200) {
             return true;
         } else {
-            throw $this->getExceptionByStatusCode($method, $url, $response);
+            throw $this->getExceptionByStatusCode($method, $url, (int)$response->getStatus(), $response->getBody());
         }
     }
 }

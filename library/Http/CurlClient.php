@@ -1,9 +1,6 @@
 <?php
-
 declare(strict_types=1);
-
 namespace Coinsnap\Http;
-
 use Coinsnap\Exception\ConnectException;
 
 /**
@@ -17,8 +14,7 @@ class CurlClient implements ClientInterface
      * Inits curl session adding any additional curl options set.
      * @return false|resource
      */
-    protected function initCurl()
-    {
+    protected function initCurl(){
         // We cannot set a return type here as it is "resource" for PHP < 8 and CurlHandle for PHP >= 8.
         $ch = curl_init();
         if ($ch && count($this->curlOptions)) {
@@ -31,20 +27,15 @@ class CurlClient implements ClientInterface
      * Use this method if you need to set any special parameters like disable CURLOPT_SSL_VERIFYHOST and CURLOPT_SSL_VERIFYPEER.
      * @return void
      */
-    public function setCurlOptions(array $options)
-    {
+    public function setCurlOptions(array $options){
         $this->curlOptions = $options;
     }
 
     /**
      * @inheritdoc
      */
-    public function request(
-        string $method,
-        string $url,
-        array  $headers = [],
-        string $body = ''
-    ): ResponseInterface {
+    public function request(string $method, string $url, array  $headers = [], string $body = ''): ResponseInterface {
+        
         $flatHeaders = [];
         foreach ($headers as $key => $value) {
             $flatHeaders[] = $key . ': ' . $value;
@@ -86,7 +77,8 @@ class CurlClient implements ClientInterface
                     }
                 }
             }
-        } else {
+        }
+        else {
             $errorMessage = curl_error($ch);
             $errorCode = curl_errno($ch);
             throw new ConnectException($errorMessage, $errorCode);

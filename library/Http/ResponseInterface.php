@@ -1,11 +1,8 @@
 <?php
-
 declare(strict_types=1);
-
 namespace Coinsnap\Http;
 
-interface ResponseInterface
-{
+interface ResponseInterface {
     /**
      * HTTP status code.
      */

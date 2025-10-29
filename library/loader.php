@@ -1,7 +1,9 @@
 <?php
 
 spl_autoload_register(function ($className) {
-    if (!defined('COINSNAP_SERVER_PATH'))	define( 'COINSNAP_SERVER_PATH', 'stores' );  
+    if (!defined('COINSNAP_SERVER_PATH')){	
+        define( 'COINSNAP_SERVER_PATH', 'stores' );
+    }
     $searchPattern = 'Coinsnap';
     // Abort here if we do not try to load Coinsnap namespace.
     if (strpos($className, $searchPattern) !== 0) {

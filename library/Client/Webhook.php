@@ -1,33 +1,10 @@
 <?php
-
 declare(strict_types=1);
-
 namespace Coinsnap\Client;
 
-class Webhook extends AbstractClient
-{
-    /**
-     * @param string $storeId
-     * @return \Coinsnap\Result\WebhookList
-     */
-    public function getStoreWebhooks(string $storeId): \Coinsnap\Result\WebhookList
-    {
-        $url = $this->getApiUrl() . '' . COINSNAP_SERVER_PATH . '/' . urlencode($storeId) . '/webhooks';
-        $headers = $this->getRequestHeaders();
-        $method = 'GET';
-        $response = $this->getHttpClient()->request($method, $url, $headers);
-
-        if ($response->getStatus() === 200) {
-            return new \Coinsnap\Result\WebhookList(
-                json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR)
-            );
-        } else {
-            throw $this->getExceptionByStatusCode($method, $url, $response);
-        }
-    }
-
-    public function getWebhook(string $storeId, string $webhookId): \Coinsnap\Result\Webhook
-    {
+class Webhook extends AbstractClient {
+    
+    public function getWebhook(string $storeId, string $webhookId): \Coinsnap\Result\Webhook {
         $url = $this->getApiUrl() . '' . COINSNAP_SERVER_PATH . '/' . urlencode($storeId) . '/webhooks/' . urlencode($webhookId);
         $headers = $this->getRequestHeaders();
         $method = 'GET';
@@ -37,18 +14,21 @@ class Webhook extends AbstractClient
             $data = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
             return new \Coinsnap\Result\Webhook($data);
         } else {
-            throw $this->getExceptionByStatusCode($method, $url, $response);
+            throw $this->getExceptionByStatusCode($method, $url, (int)$response->getStatus(), $response->getBody());
         }
     }
-
-
-
-    public function createWebhook(string $storeId, string $url, ?array $specificEvents, ?string $secret): \Coinsnap\Result\WebhookCreated
-    {
+    
+    public function createWebhook(string $storeId, string $url, ?array $specificEvents, ?string $secret): \Coinsnap\Result\WebhookCreated {
         $data = ['url' => $url];
 
         if (isset($specificEvents) && count($specificEvents) > 0) {
             $data['events'] = $specificEvents;
+        }
+        elseif (count($specificEvents) === 0) {
+            throw new \InvalidArgumentException('Argument $specificEvents should be NULL or contains at least 1 item.');
+        } 
+        else {
+            $data['authorizedEvents'] = ['everything' => false,'specificEvents' => $specificEvents];
         }
 
         if ($secret === '') {
@@ -56,19 +36,19 @@ class Webhook extends AbstractClient
         } elseif ($secret !== null) {
             $data['secret'] = $secret;
         }
-
+        
         $url = $this->getApiUrl() . '' . COINSNAP_SERVER_PATH . '/' . urlencode($storeId) . '/webhooks';
         $headers = $this->getRequestHeaders();
 
         $method = 'POST';
         $response = $this->getHttpClient()->request($method, $url, $headers, json_encode($data, JSON_THROW_ON_ERROR));
-
+        
         if ($response->getStatus() === 200) {
             $data = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
             $result = new \Coinsnap\Result\WebhookCreated($data);
             return $result;
         } else {
-            throw $this->getExceptionByStatusCode($method, $url, $response);
+            throw $this->getExceptionByStatusCode($method, $url, (int)$response->getStatus(), $response->getBody());
         }
     }
 
@@ -90,8 +70,6 @@ class Webhook extends AbstractClient
             $data['events'] = $specificEvents;
         }
 
-
-
         $url = $this->getApiUrl() . '' . COINSNAP_SERVER_PATH . '/' . urlencode($storeId) . '/webhooks/' . urlencode($webhookId);
         $headers = $this->getRequestHeaders();
         $method = 'PUT';
@@ -101,7 +79,7 @@ class Webhook extends AbstractClient
             $data = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
             return new \Coinsnap\Result\Webhook($data);
         } else {
-            throw $this->getExceptionByStatusCode($method, $url, $response);
+            throw $this->getExceptionByStatusCode($method, $url, (int)$response->getStatus(), $response->getBody());
         }
     }
 
@@ -124,14 +102,13 @@ class Webhook extends AbstractClient
         $method = 'DELETE';
         $response = $this->getHttpClient()->request($method, $url, $headers);
 
-        if ($response->getStatus() !== 200) {
-            throw $this->getExceptionByStatusCode($method, $url, $response);
+        if ($response->getStatus() !== 204 && $response->getStatus() !== 200) {
+            throw $this->getExceptionByStatusCode($method, $url, (int)$response->getStatus(), $response->getBody());
         }
     }
 
     /**
-     * @see getStoreWebhooks()
-     *
+     * Get all webhooks for a specific store
      * @param string $storeId
      * @return \Coinsnap\Result\Webhook[]
      */
@@ -151,7 +128,7 @@ class Webhook extends AbstractClient
             }
             return $r;
         } else {
-            throw $this->getExceptionByStatusCode($method, $url, $response);
+            throw $this->getExceptionByStatusCode($method, $url, (int)$response->getStatus(), $response->getBody());
         }
     }
 }
